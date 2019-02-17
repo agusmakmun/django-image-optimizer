@@ -22,7 +22,7 @@ of images by using `TinyPNG <https://tinypng.com/>`_ or `Pillow <pillow.readthed
 Installation
 ------------------------------
 
-Martor is available directly from `PyPI <https://pypi.python.org/pypi/django-image-optimizer>`_:
+Django Image Optimizer is available directly from `PyPI <https://pypi.python.org/pypi/django-image-optimizer>`_:
 
 1. Installing the package.
 
