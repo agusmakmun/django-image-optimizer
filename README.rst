@@ -72,7 +72,7 @@ file. Note: it is a good idea to keep this secret
 
     from django.db import models
 
-    from optimized_image.fields import OptimizedImageField
+    from image_optimizer.fields import OptimizedImageField
 
 
     class MyModel(models.Model):
