@@ -10,7 +10,8 @@ install_requires = [
     'Django',
     'Pillow',
     'requests',
-    'tinify'
+    'tinify',
+    'python-resize-image'
 ]
 
 setup(
