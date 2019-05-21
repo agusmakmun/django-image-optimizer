@@ -14,5 +14,20 @@ class OptimizedImageField(ImageField):
 
         if updating_image:
             from .utils import image_optimizer
-            data = image_optimizer(data)
+            data = image_optimizer(
+                data,
+                self.optimized_image_output_size
+            )
+
         super().save_form_data(instance, data)
+
+    def __init__(self, optimized_image_output_size=None, *args, **kwargs):
+        # Set the optimized_image_output_size specified on your model
+        # OptimizedImageField instances
+        self.optimized_image_output_size = optimized_image_output_size
+
+        super(OptimizedImageField, self).__init__(
+            optimized_image_output_size,
+            *args,
+            **kwargs
+        )
