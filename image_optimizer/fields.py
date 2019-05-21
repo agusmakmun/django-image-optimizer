@@ -26,8 +26,4 @@ class OptimizedImageField(ImageField):
         # OptimizedImageField instances
         self.optimized_image_output_size = optimized_image_output_size
 
-        super(OptimizedImageField, self).__init__(
-            optimized_image_output_size,
-            *args,
-            **kwargs
-        )
+        super().__init__(**kwargs)
