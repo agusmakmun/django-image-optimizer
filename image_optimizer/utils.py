@@ -15,10 +15,7 @@ def image_optimizer(image_data):
     if OPTIMIZED_IMAGE_METHOD == 'pillow':
         image = Image.open(image_data)
         bytes_io = BytesIO()
-        if image_data.name.split('.')[-1].lower() != 'jpg':
-            extension = image_data.name.split('.')[-1].upper()
-        else:
-            extension = 'JPEG'
+        extension = image.format
         image.save(bytes_io, format=extension, optimize=True)
         image_data.seek(0)
         image_data.file.write(bytes_io.getvalue())
