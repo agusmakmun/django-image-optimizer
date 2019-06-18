@@ -25,7 +25,7 @@ def get_file_extension(file_name):
     return extension
 
 
-def image_optimizer(image_data, output_size):
+def image_optimizer(image_data, output_size, resize_method='thumbnail'):
     """Optimize an image that has not been saved to a file."""
 
     if OPTIMIZED_IMAGE_METHOD == 'pillow':
@@ -36,11 +36,25 @@ def image_optimizer(image_data, output_size):
         extension = get_file_extension(file_name)
 
         if output_size is not None:
-            image = resizeimage.resize_thumbnail(
-                image,
-                output_size,
-                resample=Image.LANCZOS
-            )
+
+            if resize_method is 'thumbnail':
+                image = resizeimage.resize_thumbnail(
+                    image,
+                    output_size,
+                    resample=Image.LANCZOS
+                )
+
+            elif resize_method is 'cover':
+                image = resizeimage.resize_cover(
+                    image,
+                    output_size,
+                    validate=False
+                )
+
+            else:
+                raise Exception(
+                    'optimized_image_resize_method misconfigured, it\'s value must be \'thumbnail\' or \'cover\''
+                )
 
             output_image = Image.new(
                 'RGBA',
