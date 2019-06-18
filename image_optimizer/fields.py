@@ -32,3 +32,20 @@ class OptimizedImageField(ImageField):
         self.optimized_image_resize_method = optimized_image_resize_method
 
         super().__init__(**kwargs)
+
+    def deconstruct(self):
+        """
+        Deconstruct method.
+
+        deconstruct the field, allowing us to handle the field data, useful
+        in cases where you want to add optional arguments to your custom
+        field but you need to exclude them from migrations.
+        """
+        name, path, args, kwargs = super().deconstruct()
+        if kwargs.get('optimized_image_output_size') is not None:
+            del kwargs["optimized_image_output_size"]
+
+        if kwargs.get('optimized_image_resize_method') is not None:
+            del kwargs["optimized_image_resize_method"]
+
+        return name, path, args, kwargs
