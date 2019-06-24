@@ -20,7 +20,7 @@ class Post(models.Model):
         max_length=100
     )
     photo = OptimizedImageField(
-        upload_to='uploads/%Y/%m/%d'
+        upload_to='uploads/posts/%Y/%m/%d'
     )
     created = models.DateTimeField(
         auto_now_add=True
