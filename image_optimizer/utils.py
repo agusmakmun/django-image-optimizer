@@ -25,9 +25,8 @@ def get_file_extension(file_name):
     return extension
 
 
-def image_optimizer(image_data, output_size, resize_method='thumbnail'):
+def image_optimizer(image_data, output_size=None, resize_method=None):
     """Optimize an image that has not been saved to a file."""
-
     if OPTIMIZED_IMAGE_METHOD == 'pillow':
         image = Image.open(image_data)
         bytes_io = BytesIO()
@@ -35,9 +34,14 @@ def image_optimizer(image_data, output_size, resize_method='thumbnail'):
         file_name = image_data.name
         extension = get_file_extension(file_name)
 
+        # If output_size is set, resize the image with the selected
+        # resize_method. 'thumbnail' is used by default
         if output_size is not None:
 
-            if resize_method is 'thumbnail':
+            if resize_method is None:
+                pass
+
+            elif resize_method is 'thumbnail':
                 image = resizeimage.resize_thumbnail(
                     image,
                     output_size,
@@ -53,7 +57,7 @@ def image_optimizer(image_data, output_size, resize_method='thumbnail'):
 
             else:
                 raise Exception(
-                    'optimized_image_resize_method misconfigured, it\'s value must be \'thumbnail\' or \'cover\''
+                    'optimized_image_resize_method misconfigured, it\'s value must be \'thumbnail\', \'cover\' or None'
                 )
 
             output_image = Image.new(
@@ -72,6 +76,7 @@ def image_optimizer(image_data, output_size, resize_method='thumbnail'):
                 output_image_center
             )
 
+        # If output_size is None the output_image would be the same as source
         else:
             output_image = image
 
