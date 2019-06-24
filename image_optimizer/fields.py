@@ -24,6 +24,13 @@ class OptimizedImageField(ImageField):
 
     def __init__(self, optimized_image_output_size=None,
                  optimized_image_resize_method=None, *args, **kwargs):
+        """
+        Initialize OptimizedImageField instance.
+
+        set up the `optimized_image_output_size` and
+        `optimized_image_resize_method` arguments for the current
+        `OptimizedImageField` instance.
+        """
         # Set the optimized_image_output_size specified on your
         # OptimizedImageField model instances
         self.optimized_image_output_size = optimized_image_output_size
