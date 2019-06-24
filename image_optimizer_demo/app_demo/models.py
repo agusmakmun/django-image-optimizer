@@ -7,6 +7,15 @@ from image_optimizer.fields import OptimizedImageField
 
 
 class Post(models.Model):
+    """
+    Post model.
+
+    This model represents a Blog Post with a few fields including a `photo`
+    field which is an OptimizedImageField instance without any optional
+    argument. This means that out Post photo would keep source image original
+    size.
+    """
+
     title = models.CharField(
         max_length=100
     )
