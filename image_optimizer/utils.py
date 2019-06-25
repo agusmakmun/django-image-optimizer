@@ -13,6 +13,10 @@ from .settings import (OPTIMIZED_IMAGE_METHOD, TINYPNG_KEY)
 BACKGROUND_TRANSPARENT = (255, 255, 255, 0)
 
 
+def get_file_name(image_data):
+    return image_data.name
+
+
 def get_file_extension(file_name):
     extension = None
 
@@ -25,14 +29,17 @@ def get_file_extension(file_name):
     return extension
 
 
+def get_image_extension(image):
+    return image.format
+
+
 def image_optimizer(image_data, output_size=None, resize_method=None):
     """Optimize an image that has not been saved to a file."""
     if OPTIMIZED_IMAGE_METHOD == 'pillow':
         image = Image.open(image_data)
         bytes_io = BytesIO()
 
-        file_name = image_data.name
-        extension = get_file_extension(file_name)
+        extension = get_image_extension(image)
 
         # If output_size is set, resize the image with the selected
         # resize_method. 'thumbnail' is used by default
