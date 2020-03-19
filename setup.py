@@ -2,7 +2,7 @@
 
 from setuptools import (setup, find_packages)
 
-__VERSION__ = '1.0.0'
+__VERSION__ = '1.0.1'
 __AUTHOR__ = 'Agus Makmun (Summon Agus)'
 __AUTHOR_EMAIL__ = 'summon.agus@gmail.com'
 
@@ -43,6 +43,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'License :: OSI Approved :: MIT License',
     ],

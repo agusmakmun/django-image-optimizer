@@ -2,16 +2,16 @@ django-image-optimizer |pypi version|
 ---------------------------------------
 
 .. |pypi version|
-   image:: https://img.shields.io/pypi/v/django-image-optimizer.svg?style=flat-square
+   image:: https://img.shields.io/pypi/v/django-image-optimizer.svg
    :target: https://pypi.python.org/pypi/django-image-optimizer
 
-.. image:: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
    :target: https://raw.githubusercontent.com/agusmakmun/django-image-optimizer/master/LICENSE
 
-.. image:: https://img.shields.io/pypi/pyversions/django-image-optimizer.svg?style=flat-square
+.. image:: https://img.shields.io/pypi/pyversions/django-image-optimizer.svg
    :target: https://pypi.python.org/pypi/django-image-optimizer
 
-.. image:: https://img.shields.io/badge/Django-1.8,%201.9,%201.10,%201.11,%202.0-green.svg?style=flat-square
+.. image:: https://img.shields.io/badge/Django-1.8%20%3E=%203.0-green.svg
   :target: https://www.djangoproject.com
 
 
@@ -80,13 +80,51 @@ file. Note: it is a good idea to keep this secret
         image = OptimizedImageField()
 
 
+    class MyModel2(models.Model):
+        """
+        If you using OPTIMIZED_IMAGE_METHOD = 'pillow'
+        You can use this optional arguments.
+
+        This model represents a MyModel2 with a few
+        fields including a `image` field which is an OptimizedImageField
+        instance with `optimized_image_output_size` and
+        `optimized_image_resize_method` arguments set.
+
+        This means that image would be a resized
+        version of the source image, meant to keep a given screen resolution,
+        in this case (400, 300) pixels.
+        """
+        image = OptimizedImageField(
+            upload_to='uploads/collaborators/%Y/%m/%d',
+            optimized_image_output_size=(400, 300),
+            optimized_image_resize_method='cover'  # 'thumbnail', 'cover' or None
+        )
+
+
 and saving images into it, the same way you would to a Django ``ImageField``.
 The optimized image will be saved into the ``url`` field in place of the
 unoptimized image.
 
 
+5. Or you can directly use the ``image_optimizer`` function from utils.
+
+::
+
+    from image_optimizer.utils import image_optimizer
+
+
+    def post_image(request):
+        image_data = request.FILES.get('image')
+        image_data = image_optimizer(image_data=image_data,
+                                     output_size=(400, 300),
+                                     resize_method='cover')
+        ....
+
+
+**P.S:**
+
  Note about TinyPNG API keys: If you obtain the free TinyPNG API token, you are limited to 500
  image optimizations per month, so this function may fail if you have a
  lot of images. You may either obtain a paid API key, or wait until next month.
 
-This project also taken from: https://github.com/dchukhin/django_optimized_image
+This project forked from: https://github.com/dchukhin/django_optimized_image

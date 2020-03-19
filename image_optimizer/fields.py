@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db.models import ImageField
+from .utils import image_optimizer
 
 
 class OptimizedImageField(ImageField):
@@ -13,7 +14,6 @@ class OptimizedImageField(ImageField):
         updating_image = True if data and getattr(instance, self.name) != data else False
 
         if updating_image:
-            from .utils import image_optimizer
             data = image_optimizer(
                 data,
                 self.optimized_image_output_size,
@@ -34,6 +34,7 @@ class OptimizedImageField(ImageField):
         # Set the optimized_image_output_size specified on your
         # OptimizedImageField model instances
         self.optimized_image_output_size = optimized_image_output_size
+
         # Set the optimized_image_resize_method specified on your
         # OptimizedImageField model instances
         self.optimized_image_resize_method = optimized_image_resize_method
@@ -49,10 +50,11 @@ class OptimizedImageField(ImageField):
         field but you need to exclude them from migrations.
         """
         name, path, args, kwargs = super().deconstruct()
-        if kwargs.get('optimized_image_output_size') is not None:
-            del kwargs["optimized_image_output_size"]
 
-        if kwargs.get('optimized_image_resize_method') is not None:
-            del kwargs["optimized_image_resize_method"]
+        if kwargs.get('optimized_image_output_size'):
+            del kwargs['optimized_image_output_size']
+
+        if kwargs.get('optimized_image_resize_method'):
+            del kwargs['optimized_image_resize_method']
 
         return name, path, args, kwargs
