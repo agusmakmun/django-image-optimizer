@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from io import BytesIO
 from PIL import Image
 from resizeimage import resizeimage
-
+from uuid import uuid4
 import tinify
 import logging
 import requests
@@ -99,3 +99,36 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
         image_data.file.truncate()
 
     return image_data
+
+''' Tested with Pillow. '''
+def crop_image_on_axis(image, width, height, x, y, extension):
+
+    '''Open the passed image'''
+    img = Image.open(image)
+
+    '''Initialise bytes io'''
+    bytes_io = BytesIO()
+
+    '''crop the image through axis'''
+    img = img.crop((x, y, width+x, height+y))
+
+    '''resize the image and optimise it for file size, making smaller as possible'''
+    img = img.resize((width, height), Image.ANTIALIAS)
+
+    ''' This line is optional, for safe side, image name should be unique.'''
+    img.name = "{}.{}".format(uuid4().hex, extension)
+
+    ''' If the file extension is JPEG, convert the output_image to RGB'''
+    if extension == 'JPEG':
+        img = image.convert('RGB')
+    img.save(bytes_io, format=extension, optimize=True)
+
+    '''return the image'''
+    image.seek(0)
+
+    ''' Write back new image'''
+    image.file.write(bytes_io.getvalue())
+
+    '''truncate the file size.'''
+    image.file.truncate()
+    return image
