@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
+import tinify
+import logging
+import requests
 from io import BytesIO
 from PIL import Image
 from resizeimage import resizeimage
 from uuid import uuid4
-import tinify
-import logging
-import requests
 
-from .settings import (OPTIMIZED_IMAGE_METHOD, TINYPNG_KEY)
+from .settings import OPTIMIZED_IMAGE_METHOD, TINYPNG_KEY
 
 
 BACKGROUND_TRANSPARENT = (255, 255, 255, 0)
@@ -23,10 +20,10 @@ def get_file_extension(file_name):
     extension = None
 
     # Get image file extension
-    if file_name.split('.')[-1].lower() != 'jpg':
-        extension = file_name.split('.')[-1].upper()
+    if file_name.split(".")[-1].lower() != "jpg":
+        extension = file_name.split(".")[-1].upper()
     else:
-        extension = 'JPEG'
+        extension = "JPEG"
 
     return extension
 
@@ -39,11 +36,11 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
     """
     Optimize an image that has not been saved to a file.
     :param `image_data` is image data, e.g from request.FILES['image']
-    :param `output_size` is float pixel scale of image (width, height) or None, e.g: (400, 300)
-    :param `resize_method` is string resize method, choices are: None, "thumbnail", or "cover".
+    :param `output_size` is float pixel scale of image (width, height) or None, for example: (400, 300) # noqa: E501
+    :param `resize_method` is string resize method, choices are: None, "thumbnail", or "cover". # noqa: E501
     :return optimized image data.
     """
-    if OPTIMIZED_IMAGE_METHOD == 'pillow':
+    if OPTIMIZED_IMAGE_METHOD == "pillow":
         image = Image.open(image_data)
         bytes_io = BytesIO()
 
@@ -53,29 +50,41 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
         # resize_method. 'thumbnail' is used by default
         if output_size is not None:
 
-            if resize_method not in ('thumbnail', 'cover', None):
-                message = 'optimized_image_resize_method misconfigured, it\'s value must be \'thumbnail\', \'cover\' or None'
+            if resize_method not in ("thumbnail", "cover", None):
+                message = (
+                    "optimized_image_resize_method misconfigured, "
+                    "it's value must be 'thumbnail', 'cover' or None"
+                )
                 raise Exception(message)
 
-            elif resize_method is 'thumbnail':
-                image = resizeimage.resize_thumbnail(image, output_size, resample=Image.LANCZOS)
+            elif resize_method == "thumbnail":
+                image = resizeimage.resize_thumbnail(
+                    image, output_size, resample=Image.LANCZOS
+                )
 
-            elif resize_method is 'cover':
+            elif resize_method == "cover":
                 image = resizeimage.resize_cover(image, output_size, validate=False)
 
-            output_image = Image.new('RGBA', output_size, BACKGROUND_TRANSPARENT)
-            output_image_center = (int((output_size[0] - image.size[0]) / 2),
-                                   int((output_size[1] - image.size[1]) / 2))
+            output_image = Image.new(
+                "RGBA",
+                output_size,
+                BACKGROUND_TRANSPARENT,
+            )
+            output_image_center = (
+                int((output_size[0] - image.size[0]) / 2),
+                int((output_size[1] - image.size[1]) / 2),
+            )
 
             output_image.paste(image, output_image_center)
 
         else:
-            # If output_size is None the output_image would be the same as source
+            # If output_size is None the output_image
+            # would be the same as source
             output_image = image
 
         # If the file extension is JPEG, convert the output_image to RGB
-        if extension == 'JPEG':
-            output_image = output_image.convert('RGB')
+        if extension == "JPEG":
+            output_image = output_image.convert("RGB")
 
         output_image.save(bytes_io, format=extension, optimize=True)
 
@@ -83,52 +92,66 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
         image_data.file.write(bytes_io.getvalue())
         image_data.file.truncate()
 
-    elif OPTIMIZED_IMAGE_METHOD == 'tinypng':
+    elif OPTIMIZED_IMAGE_METHOD == "tinypng":
         # disable warning info
         requests.packages.urllib3.disable_warnings()
 
         # just info for people
         if any([output_size, resize_method]):
-            message = '[django-image-optimizer] "output_size" and "resize_method" only for OPTIMIZED_IMAGE_METHOD="pillow"'
+            message = (
+                '[django-image-optimizer] "output_size" and "resize_method" '
+                'only for OPTIMIZED_IMAGE_METHOD="pillow"'
+            )
             logging.info(message)
 
         tinify.key = TINYPNG_KEY
-        optimized_buffer = tinify.from_buffer(image_data.file.read()).to_buffer()
+        optimized_buffer = tinify.from_buffer(
+            image_data.file.read()
+        ).to_buffer()  # noqa: E501
         image_data.seek(0)
         image_data.file.write(optimized_buffer)
         image_data.file.truncate()
 
     return image_data
 
-''' Tested with Pillow. '''
-def crop_image_on_axis(image, width, height, x, y, extension):
 
-    '''Open the passed image'''
+def crop_image_on_axis(image, width, height, x, y, extension):
+    """
+    function to crop the image using axis (using Pillow).
+    :param `image` is image data, e.g from request.FILES['image']
+    :param `width` float width of image
+    :param `height` float height of image
+    :param `x` is float x axis
+    :param `y` is float y axis
+    :param `extension` is string, e.g: ".png"
+    """
+    # Open the passed image
     img = Image.open(image)
 
-    '''Initialise bytes io'''
+    # Initialise bytes io
     bytes_io = BytesIO()
 
-    '''crop the image through axis'''
-    img = img.crop((x, y, width+x, height+y))
+    # crop the image through axis
+    img = img.crop((x, y, width + x, height + y))
 
-    '''resize the image and optimise it for file size, making smaller as possible'''
+    # resize the image and optimise it for file size,
+    # making smaller as possible
     img = img.resize((width, height), Image.ANTIALIAS)
 
-    ''' This line is optional, for safe side, image name should be unique.'''
+    # This line is optional, for safe side, image name should be unique.
     img.name = "{}.{}".format(uuid4().hex, extension)
 
-    ''' If the file extension is JPEG, convert the output_image to RGB'''
-    if extension == 'JPEG':
-        img = image.convert('RGB')
+    # If the file extension is JPEG, convert the output_image to RGB
+    if extension == "JPEG":
+        img = image.convert("RGB")
     img.save(bytes_io, format=extension, optimize=True)
 
-    '''return the image'''
+    # return the image
     image.seek(0)
 
-    ''' Write back new image'''
+    # Write back new image
     image.file.write(bytes_io.getvalue())
 
-    '''truncate the file size.'''
+    # truncate the file size
     image.file.truncate()
     return image
