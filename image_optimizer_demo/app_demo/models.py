@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from image_optimizer.fields import OptimizedImageField
+# from image_optimizer.fields import OptimizedImageField
 
 
 class Post(models.Model):
@@ -19,9 +19,7 @@ class Post(models.Model):
     title = models.CharField(
         max_length=100
     )
-    photo = OptimizedImageField(
-        upload_to='uploads/posts/%Y/%m/%d'
-    )
+    photo =  models.ImageField("Photo", upload_to="media")
     created = models.DateTimeField(
         auto_now_add=True
     )
@@ -50,11 +48,12 @@ class Collaborator(models.Model):
     name = models.CharField(
         max_length=100
     )
-    profile_image = OptimizedImageField(
-        upload_to='uploads/collaborators/%Y/%m/%d',
-        optimized_image_output_size=(400, 300),
-        optimized_image_resize_method='cover'  # 'thumbnail' or 'cover'
-    )
+    profile_image = models.ImageField("Profile Image", upload_to="media")
+    # profile_image = OptimizedImageField(
+    #     upload_to='uploads/collaborators/%Y/%m/%d',
+    #     optimized_image_output_size=(400, 300),
+    #     optimized_image_resize_method='cover'  # 'thumbnail' or 'cover'
+    # )
     created = models.DateTimeField(
         auto_now_add=True
     )

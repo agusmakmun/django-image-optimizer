@@ -127,5 +127,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
-STATIC_ROOT = os.path.join(tempfile.gettempdir(), 'image_optimizer_static')
-MEDIA_ROOT = os.path.join(tempfile.gettempdir(), 'image_optimizer_media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
