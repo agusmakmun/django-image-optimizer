@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db.models import ImageField
 from .utils import image_optimizer
 
@@ -11,19 +8,26 @@ class OptimizedImageField(ImageField):
     def save_form_data(self, instance, data):
         """Remove the OptimizedNotOptimized object on clearing the image."""
         # Are we updating an image?
-        updating_image = True if data and getattr(instance, self.name) != data else False
+        updating_image = (
+            True if data and getattr(instance, self.name) != data else False
+        )
 
         if updating_image:
             data = image_optimizer(
                 data,
                 self.optimized_image_output_size,
-                self.optimized_image_resize_method
+                self.optimized_image_resize_method,
             )
 
         super().save_form_data(instance, data)
 
-    def __init__(self, optimized_image_output_size=None,
-                 optimized_image_resize_method=None, *args, **kwargs):
+    def __init__(
+        self,
+        optimized_image_output_size=None,
+        optimized_image_resize_method=None,
+        *args,
+        **kwargs
+    ):
         """
         Initialize OptimizedImageField instance.
 
@@ -51,10 +55,10 @@ class OptimizedImageField(ImageField):
         """
         name, path, args, kwargs = super().deconstruct()
 
-        if kwargs.get('optimized_image_output_size'):
-            del kwargs['optimized_image_output_size']
+        if kwargs.get("optimized_image_output_size"):
+            del kwargs["optimized_image_output_size"]
 
-        if kwargs.get('optimized_image_resize_method'):
-            del kwargs['optimized_image_resize_method']
+        if kwargs.get("optimized_image_resize_method"):
+            del kwargs["optimized_image_resize_method"]
 
         return name, path, args, kwargs
