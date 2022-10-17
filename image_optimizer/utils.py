@@ -37,7 +37,7 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
     Optimize an image that has not been saved to a file.
     :param `image_data` is image data, e.g from request.FILES['image']
     :param `output_size` is float pixel scale of image (width, height) or None, for example: (400, 300) # noqa: E501
-    :param `resize_method` is string resize method, choices are: None, "thumbnail", or "cover". # noqa: E501
+    :param `resize_method` is string resize method, choices are: None or resizeimage.resize() method argument values. # noqa: E501
     :return optimized image data.
     """
     if OPTIMIZED_IMAGE_METHOD == "pillow":
@@ -50,20 +50,10 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
         # resize_method. 'thumbnail' is used by default
         if output_size is not None:
 
-            if resize_method not in ("thumbnail", "cover", None):
-                message = (
-                    "optimized_image_resize_method misconfigured, "
-                    "it's value must be 'thumbnail', 'cover' or None"
+            if resize_method:
+                image = resizeimage.resize(
+                    method=resize_method, image=image, size=output_size,
                 )
-                raise Exception(message)
-
-            elif resize_method == "thumbnail":
-                image = resizeimage.resize_thumbnail(
-                    image, output_size, resample=Image.LANCZOS
-                )
-
-            elif resize_method == "cover":
-                image = resizeimage.resize_cover(image, output_size, validate=False)
 
             output_image = Image.new(
                 "RGBA",
