@@ -18,13 +18,11 @@ def get_file_name(image_data):
 
 def get_file_extension(file_name):
     extension = None
-
     # Get image file extension
     if file_name.split(".")[-1].lower() != "jpg":
         extension = file_name.split(".")[-1].upper()
     else:
         extension = "JPEG"
-
     return extension
 
 
@@ -37,7 +35,9 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
     Optimize an image that has not been saved to a file.
     :param `image_data` is image data, e.g from request.FILES['image']
     :param `output_size` is float pixel scale of image (width, height) or None, for example: (400, 300) # noqa: E501
-    :param `resize_method` is string resize method, choices are: None or resizeimage.resize() method argument values. # noqa: E501
+    :param `resize_method` is string resize method, choices are:
+            None or resizeimage.resize() method argument values,
+            i.e: "crop", "cover", "contain", "width", "height", "thumbnail"
     :return optimized image data.
     """
     if OPTIMIZED_IMAGE_METHOD == "pillow":
@@ -49,10 +49,11 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
         # If output_size is set, resize the image with the selected
         # resize_method. 'thumbnail' is used by default
         if output_size is not None:
-
             if resize_method:
                 image = resizeimage.resize(
-                    method=resize_method, image=image, size=output_size,
+                    method=resize_method,
+                    image=image,
+                    size=output_size,
                 )
 
             output_image = Image.new(
@@ -64,9 +65,7 @@ def image_optimizer(image_data, output_size=None, resize_method=None):
                 int((output_size[0] - image.size[0]) / 2),
                 int((output_size[1] - image.size[1]) / 2),
             )
-
             output_image.paste(image, output_image_center)
-
         else:
             # If output_size is None the output_image
             # would be the same as source

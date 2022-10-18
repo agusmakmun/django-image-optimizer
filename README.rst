@@ -95,9 +95,9 @@ file. Note: it is a good idea to keep this secret
         in this case (400, 300) pixels.
         """
         image = OptimizedImageField(
-            upload_to='uploads/collaborators/%Y/%m/%d',
+            upload_to="uploads/%Y/%m/%d",
             optimized_image_output_size=(400, 300),
-            optimized_image_resize_method='cover'  # 'thumbnail', 'cover' or None
+            optimized_image_resize_method="cover"  #  "crop", "cover", "contain", "width", "height", "thumbnail" or None
         )
 
 

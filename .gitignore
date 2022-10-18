@@ -7,3 +7,4 @@ dist/
 *backup*
 db.sqlite3
 .vscode
+image_optimizer_demo/media/*

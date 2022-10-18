@@ -28,7 +28,7 @@ class CropImageAxisForm(forms.ModelForm):
                 raise forms.ValidationError(error)
 
             instance.image = image
-            instance.save(commit=True)
+            instance.save()
             return instance
 
         return super().save(commit)
